@@ -1,0 +1,7 @@
+app_name: user
+log_level: debug
+port: 8081
+max_file_size: 104857600
+etcd:
+  addr: 127.0.0.1:2379
+  heart_beat: 60

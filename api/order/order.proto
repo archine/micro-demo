@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package order;
+
+option go_package = ".;order";
+
+service Order{
+  // 订单列表
+  rpc OrderList(OrderListRequest) returns (OrderListResponse){}
+
+  // 订单的商品列表
+  rpc OrderGoods(OrderDetailRequest) returns (OrderDetailResponse){}
+}
+
+message OrderListRequest{
+  int64 userid = 1;
+}
+
+message OrderListResponse{
+  message OrderInfo{
+    // 订单号
+    string no = 1;
+    // 订单金额
+    double price = 2;
+    // 订单状态：1待付款2配送中3已完成
+    int32 status = 3;
+  }
+  repeated OrderInfo data = 1;
+}
+
+message OrderDetailRequest{
+  int64 order_id = 1;
+}
+
+message OrderDetailResponse{
+  // 订单商品
+  repeated string goods_name = 1;
+}
+
+
+
