@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = ".;user";
+
+service User{
+  // 用户详情
+  rpc UserInfo(UserInfoRequest) returns (UserInfoResponse){}
+}
+
+message UserInfoRequest{
+  int64 userid = 1;
+}
+
+message UserInfoResponse{
+  string username = 1;
+  string mobile = 2;
+}
