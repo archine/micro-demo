@@ -24,7 +24,7 @@ type config struct {
 	AppName     string `mapstructure:"app_name"`
 	LogLevel    string `mapstructure:"log_level"`     // 日志级别
 	Port        int    `mapstructure:"port"`          // 项目运行端口
-	GrpcPort    int    `mapstructure:"grpc_port"`     // grpc端口
+	GrpcPort    int    `mapstructure:"grpc_port"`     // grpc运行端口
 	MaxFileSize int64  `mapstructure:"max_file_size"` // 最大文件上传大小，byte
 	Etcd        etcd   `mapstructure:"etcd"`
 }

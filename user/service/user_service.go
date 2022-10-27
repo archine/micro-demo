@@ -26,5 +26,5 @@ func (u *UserService) FindUserById(userid int) (*vo.UserInfo, error) {
 			Mobile:   "13300001111",
 		}, nil
 	}
-	return nil, errors.New("错误")
+	return nil, errors.New("用户不存在")
 }

@@ -10,9 +10,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/resolver"
-	"micro-demo/api/order"
-	"micro-demo/user/base/discovery"
-	"micro-demo/user/config"
+	"micro-demo/api/user"
+	"micro-demo/order/base/discovery"
+	"micro-demo/order/config"
 	"micro-demo/user/util"
 	"net"
 	"net/http"
@@ -79,15 +79,15 @@ func (a *App) Run() {
 	}
 }
 
-// 加载grpc服务
+// 加载grpc客户端服务
 func initGrpcClient() {
 	builder := discovery.NewBuilder(config.Conf.Etcd.Addr)
 	resolver.Register(builder)
-	dial, err := grpc.Dial(builder.Scheme()+":/"+"order", grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	dial, err := grpc.Dial(builder.Scheme()+":/"+"user", grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("init order service client failed,%s", err.Error())
+		log.Fatalf("init user service client failed,%s", err.Error())
 	}
-	ioc.SetBeans(order.NewOrderClient(dial))
+	ioc.SetBeans(user.NewUserClient(dial))
 }
 
 // 初始化gin

@@ -81,6 +81,7 @@ func (r *Builder) watch(prefix string) {
 						}
 					}
 				case mvccpb.DELETE:
+					log.Debugf("%s下线", addr)
 					if addrs, ok := util.Remove(addrList, addr); ok {
 						if err = r.clientConn.UpdateState(resolver.State{Addresses: addrs}); err != nil {
 							panic(err)

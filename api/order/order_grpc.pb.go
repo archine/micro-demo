@@ -22,10 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderClient interface {
-	// 订单列表
+	// 用户订单列表
 	OrderList(ctx context.Context, in *OrderListRequest, opts ...grpc.CallOption) (*OrderListResponse, error)
-	// 订单的商品列表
-	OrderGoods(ctx context.Context, in *OrderDetailRequest, opts ...grpc.CallOption) (*OrderDetailResponse, error)
 }
 
 type orderClient struct {
@@ -45,23 +43,12 @@ func (c *orderClient) OrderList(ctx context.Context, in *OrderListRequest, opts 
 	return out, nil
 }
 
-func (c *orderClient) OrderGoods(ctx context.Context, in *OrderDetailRequest, opts ...grpc.CallOption) (*OrderDetailResponse, error) {
-	out := new(OrderDetailResponse)
-	err := c.cc.Invoke(ctx, "/order.Order/OrderGoods", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // OrderServer is the server API for Order service.
 // All implementations must embed UnimplementedOrderServer
 // for forward compatibility
 type OrderServer interface {
-	// 订单列表
+	// 用户订单列表
 	OrderList(context.Context, *OrderListRequest) (*OrderListResponse, error)
-	// 订单的商品列表
-	OrderGoods(context.Context, *OrderDetailRequest) (*OrderDetailResponse, error)
 	mustEmbedUnimplementedOrderServer()
 }
 
@@ -71,9 +58,6 @@ type UnimplementedOrderServer struct {
 
 func (UnimplementedOrderServer) OrderList(context.Context, *OrderListRequest) (*OrderListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OrderList not implemented")
-}
-func (UnimplementedOrderServer) OrderGoods(context.Context, *OrderDetailRequest) (*OrderDetailResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OrderGoods not implemented")
 }
 func (UnimplementedOrderServer) mustEmbedUnimplementedOrderServer() {}
 
@@ -106,24 +90,6 @@ func _Order_OrderList_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Order_OrderGoods_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OrderDetailRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrderServer).OrderGoods(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/order.Order/OrderGoods",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServer).OrderGoods(ctx, req.(*OrderDetailRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Order_ServiceDesc is the grpc.ServiceDesc for Order service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,10 +100,6 @@ var Order_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "OrderList",
 			Handler:    _Order_OrderList_Handler,
-		},
-		{
-			MethodName: "OrderGoods",
-			Handler:    _Order_OrderGoods_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

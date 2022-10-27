@@ -5,14 +5,12 @@ package order;
 option go_package = ".;order";
 
 service Order{
-  // 订单列表
+  // 用户订单列表
   rpc OrderList(OrderListRequest) returns (OrderListResponse){}
-
-  // 订单的商品列表
-  rpc OrderGoods(OrderDetailRequest) returns (OrderDetailResponse){}
 }
 
 message OrderListRequest{
+  // 用户id
   int64 userid = 1;
 }
 
@@ -26,15 +24,6 @@ message OrderListResponse{
     int32 status = 3;
   }
   repeated OrderInfo data = 1;
-}
-
-message OrderDetailRequest{
-  int64 order_id = 1;
-}
-
-message OrderDetailResponse{
-  // 订单商品
-  repeated string goods_name = 1;
 }
 
 
