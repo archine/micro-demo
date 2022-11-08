@@ -2,7 +2,7 @@ package service
 
 import (
 	"errors"
-	ioc "gitlab.avatarworks.com/servers/component/hj-ioc"
+	"github.com/archine/ioc"
 	"micro-demo/user/controller/vo"
 )
 

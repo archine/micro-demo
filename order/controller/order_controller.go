@@ -2,9 +2,9 @@ package controller
 
 import (
 	"context"
+	"github.com/archine/gin-plus/mvc"
+	"github.com/archine/gin-plus/resp"
 	"github.com/gin-gonic/gin"
-	"gitlab.avatarworks.com/servers/component/hj-gin/mvc"
-	"gitlab.avatarworks.com/servers/component/hj-gin/resp"
 	"google.golang.org/grpc"
 	"micro-demo/api/order"
 	"micro-demo/api/user"

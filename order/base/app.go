@@ -2,11 +2,11 @@ package base
 
 import (
 	"fmt"
+	"github.com/archine/gin-plus/plugin"
+	"github.com/archine/ioc"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"gitlab.avatarworks.com/servers/component/hj-gin/plugin"
-	ioc "gitlab.avatarworks.com/servers/component/hj-ioc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/resolver"

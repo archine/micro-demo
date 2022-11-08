@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/archine/gin-plus/mvc"
+	"github.com/archine/ioc"
 	log "github.com/sirupsen/logrus"
-	"gitlab.avatarworks.com/servers/component/hj-gin/mvc"
-	ioc "gitlab.avatarworks.com/servers/component/hj-ioc"
 	"micro-demo/user/base"
 	_ "micro-demo/user/controller"
 )

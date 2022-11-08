@@ -3,12 +3,12 @@ module micro-demo
 go 1.18
 
 require (
+	github.com/archine/gin-plus v1.0.0
+	github.com/archine/ioc v1.0.0
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.13.0
-	gitlab.avatarworks.com/servers/component/hj-gin v1.0.4
-	gitlab.avatarworks.com/servers/component/hj-ioc v1.0.0
 	go.etcd.io/etcd/api/v3 v3.5.4
 	go.etcd.io/etcd/client/v3 v3.5.4
 	google.golang.org/grpc v1.46.2
