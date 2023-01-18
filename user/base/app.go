@@ -2,7 +2,10 @@ package base
 
 import (
 	"fmt"
-	"github.com/archine/gin-plus/plugin"
+	"github.com/archine/gin-plus/v2/ast"
+	"github.com/archine/gin-plus/v2/exception"
+	"github.com/archine/gin-plus/v2/mvc"
+	"github.com/archine/gin-plus/v2/plugin"
 	"github.com/archine/ioc"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -21,31 +24,67 @@ import (
 	"syscall"
 )
 
-type App struct {
-	Engine     *gin.Engine
-	GrpcServer *grpc.Server
+// RunApplication run the main program entry
+// @Param args start command parameter
+func RunApplication(args []string, globalFunc ...gin.HandlerFunc) {
+	if len(args) > 1 && os.Args[1] == "ast" {
+		ast.Parse()
+		return
+	}
+	config.LoadApplicationConfigFile("user/app.yml")
+	startApplication(initGin(), globalFunc, initGrpcClient())
 }
 
-// NewApp 初始化应用程序
-func NewApp(configPath string) (*App, error) {
-	config.InitConfig(configPath)
-	engine := initGin()
-	initGrpcClient()
-	return &App{
-		Engine:     engine,
-		GrpcServer: grpc.NewServer(),
-	}, nil
+// 加载grpc服务
+func initGrpcClient() *grpc.Server {
+	builder := discovery.NewBuilder(config.Conf.Etcd.Addr)
+	resolver.Register(builder)
+	dial, err := grpc.Dial(builder.Scheme()+":/"+"order", grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("init order service client failed,%s", err.Error())
+	}
+	grpcServer := grpc.NewServer()
+	ioc.SetBeans(order.NewOrderClient(dial), grpcServer)
+	return grpcServer
 }
 
-// Run 启动应用程序
-func (a *App) Run() {
+// 初始化gin
+func initGin() *gin.Engine {
+	if config.Conf.LogLevel == "debug" {
+		gin.SetMode(gin.DebugMode)
+	} else {
+		gin.SetMode(gin.ReleaseMode)
+	}
+	engine := gin.New()
+	plugin.InitLog(config.Conf.LogLevel)
+	engine.Use(plugin.LogMiddleware())
+	engine.Use(exception.GlobalExceptionInterceptor)
+	engine.Use(cors.New(cors.Config{
+		AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return true
+		},
+	}))
+	engine.MaxMultipartMemory = config.Conf.MaxFileSize
+	engine.RemoveExtraSlash = true
+	ioc.SetBeans(engine)
+	log.Debugf("init gin engine successful...")
+	return engine
+}
+
+func startApplication(engine *gin.Engine, globalFunc []gin.HandlerFunc, grpcServer *grpc.Server) {
+	mvc.Apply(engine, true, Ast, globalFunc...)
+	log.Debugf("api apply successful...")
 	ipAddr, err := util.GetIpAddr()
 	if err != nil {
 		log.Fatalf("get local ip faild,%s", err.Error())
 	}
 	svc := &http.Server{
 		Addr:    fmt.Sprintf(":%d", config.Conf.Port),
-		Handler: a.Engine,
+		Handler: engine,
 	}
 
 	registrar := discovery.NewRegistrar(config.Conf.Etcd.Addr, config.Conf.AppName, config.Conf.Etcd.HeartBeat)
@@ -62,52 +101,20 @@ func (a *App) Run() {
 	}()
 
 	go func() {
-		listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d", ipAddr, config.Conf.GrpcPort))
+		var listener net.Listener
+		listener, err = net.Listen("tcp", fmt.Sprintf("%s:%d", ipAddr, config.Conf.GrpcPort))
 		if err != nil {
 			log.Fatalf("initializer grpc server failed,%s", err.Error())
 		}
-		err = a.GrpcServer.Serve(listener)
+		err = grpcServer.Serve(listener)
 		if err != nil {
 			log.Fatalf("listen to grpc server failed,%s", err.Error())
 		}
 	}()
 
 	log.Infof("%s successfully started on Ports:[%d,%d]", config.Conf.AppName, config.Conf.Port, config.Conf.GrpcPort)
-	if err := svc.ListenAndServe(); err != nil {
+	if err = svc.ListenAndServe(); err != nil {
 		registrar.Deregister()
 		log.Fatalf("%s failed to start, %s", config.Conf.AppName, err.Error())
 	}
-}
-
-// 加载grpc服务
-func initGrpcClient() {
-	builder := discovery.NewBuilder(config.Conf.Etcd.Addr)
-	resolver.Register(builder)
-	dial, err := grpc.Dial(builder.Scheme()+":/"+"order", grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy": "round_robin"}`), grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Fatalf("init order service client failed,%s", err.Error())
-	}
-	ioc.SetBeans(order.NewOrderClient(dial))
-}
-
-// 初始化gin
-func initGin() *gin.Engine {
-	gin.SetMode(gin.ReleaseMode)
-	engine := gin.New()
-	plugin.InitLog(config.Conf.LogLevel)
-	engine.Use(plugin.LogMiddleware())
-	engine.Use(plugin.GlobalExceptionInterceptor)
-	engine.Use(cors.New(cors.Config{
-		AllowMethods:     []string{"PUT", "PATCH", "POST", "GET", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		AllowOriginFunc: func(origin string) bool {
-			return true
-		},
-	}))
-	engine.MaxMultipartMemory = config.Conf.MaxFileSize
-	engine.RemoveExtraSlash = true
-	log.Debugf("init gin engine successful...")
-	return engine
 }

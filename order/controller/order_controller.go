@@ -2,8 +2,8 @@ package controller
 
 import (
 	"context"
-	"github.com/archine/gin-plus/mvc"
-	"github.com/archine/gin-plus/resp"
+	"github.com/archine/gin-plus/v2/mvc"
+	"github.com/archine/gin-plus/v2/resp"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"micro-demo/api/order"
@@ -13,6 +13,8 @@ import (
 	"strconv"
 )
 
+// OrderController
+// @BasePath("/order")
 type OrderController struct {
 	mvc.Controller
 	order.UnimplementedOrderServer
@@ -22,10 +24,7 @@ type OrderController struct {
 }
 
 func init() {
-	o := &OrderController{}
-	o.Prefix("/order").
-		Get("/:id", o.orderInfo, false)
-	mvc.Register(o)
+	mvc.Register(&OrderController{})
 }
 
 func (o *OrderController) PostConstruct() {
@@ -40,8 +39,9 @@ func (o *OrderController) OrderList(ctx context.Context, request *order.OrderLis
 	}, nil
 }
 
-// orderInfo 订单详情
-func (o *OrderController) orderInfo(ctx *gin.Context) {
+// OrderInfo
+// @GET(path="/:id", globalFunc=false) 订单详情
+func (o *OrderController) OrderInfo(ctx *gin.Context) {
 	orderId, err := strconv.Atoi(ctx.Param("id"))
 	if resp.ParamInvalid(ctx, err != nil) {
 		return

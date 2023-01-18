@@ -2,8 +2,8 @@ package controller
 
 import (
 	"context"
-	"github.com/archine/gin-plus/mvc"
-	"github.com/archine/gin-plus/resp"
+	"github.com/archine/gin-plus/v2/mvc"
+	"github.com/archine/gin-plus/v2/resp"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"micro-demo/api/order"
@@ -12,6 +12,8 @@ import (
 	"strconv"
 )
 
+// UserController
+// @BasePath("/user")
 type UserController struct {
 	mvc.Controller
 	user.UnimplementedUserServer
@@ -21,21 +23,16 @@ type UserController struct {
 }
 
 func init() {
-	u := &UserController{}
-	u.Prefix("/user").
-		GetGroup([]*mvc.ApiInfo{
-			{"/:id", u.userInfo, false},
-			{"/orders/:id", u.userOrders, false},
-		})
-	mvc.Register(u)
+	mvc.Register(&UserController{})
 }
 
 func (u *UserController) PostConstruct() {
 	user.RegisterUserServer(u.Grpc, u)
 }
 
-// 用户详情
-func (u *UserController) userInfo(ctx *gin.Context) {
+// FindUserById
+// @GET(path="/:id", globalFunc=false) 用户详情
+func (u *UserController) FindUserById(ctx *gin.Context) {
 	userid, err := strconv.Atoi(ctx.Param("id"))
 	if resp.ParamInvalid(ctx, err != nil) {
 		return
@@ -47,8 +44,9 @@ func (u *UserController) userInfo(ctx *gin.Context) {
 	resp.Json(ctx, info)
 }
 
-// 查询用户的订单
-func (u *UserController) userOrders(ctx *gin.Context) {
+// FindOrdersById
+// @GET(path="/orders/:id", globalFunc=false) 查询用户的订单
+func (u *UserController) FindOrdersById(ctx *gin.Context) {
 	userId, err := strconv.Atoi(ctx.Param("id"))
 	if resp.ParamInvalid(ctx, err != nil) {
 		return

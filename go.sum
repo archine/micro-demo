@@ -44,10 +44,10 @@ github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRF
 github.com/alecthomas/units v0.0.0-20190717042225-c3de453c63f4/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
 github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d/go.mod h1:rBZYJk541a8SKzHPHnH3zbiI+7dagKZ0cgpgrD7Fyho=
 github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
-github.com/archine/gin-plus v1.0.0 h1:gadEGAk1d2TSkp9J0YKy5YT1st4scVRydVyRqjDDstE=
-github.com/archine/gin-plus v1.0.0/go.mod h1:6XuxsTe61qshP302Na3I6Lqmqqtnmet25AZY2Znjpjs=
-github.com/archine/ioc v1.0.0 h1:UZJiMcNImwNySyDGeHNr7IQ2V8l9oCornrFyCrkit2M=
-github.com/archine/ioc v1.0.0/go.mod h1:VTtX1hL4nkWJrvc6QbqXaOLLSnk3P0KTWh71nwRpJHM=
+github.com/archine/gin-plus/v2 v2.0.2 h1:jLVncEQm3ntT7u51cr2shMgwb/0v90hlIFMPGqdrKNA=
+github.com/archine/gin-plus/v2 v2.0.2/go.mod h1:v+EWXbnBDfTiSx0QhBUgDnsVk2l4cX6YmwzcdBe8uyo=
+github.com/archine/ioc v1.0.1 h1:YHMAo/WSjQ+e2XU7PA7XAhOnNBQiZ0+yM/cAhdT1EUU=
+github.com/archine/ioc v1.0.1/go.mod h1:VTtX1hL4nkWJrvc6QbqXaOLLSnk3P0KTWh71nwRpJHM=
 github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973/go.mod h1:Dwedo/Wpr24TaqPxmxbtue+5NUziq4I4S80YR8gNf3Q=
 github.com/beorn7/perks v1.0.0/go.mod h1:KWe93zE9D1o94FZ5RNwFwVgaQK1VOXiVxmqh+CedLV8=
 github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=

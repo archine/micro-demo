@@ -12,9 +12,9 @@ func Exists(l []resolver.Address, addr string) bool {
 	return false
 }
 
-func Remove(s []resolver.Address, addr string) ([]resolver.Address, bool) {
+func Remove(s []resolver.Address, serverName string) ([]resolver.Address, bool) {
 	for i, address := range s {
-		if address.Addr == addr {
+		if address.ServerName == serverName {
 			if i == len(s)-1 {
 				return s[:i], true
 			}

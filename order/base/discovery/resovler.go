@@ -71,19 +71,21 @@ func (r *Builder) watch(prefix string) {
 		case e := <-watch:
 			for _, event := range e.Events {
 				addr := string(event.Kv.Value)
+				serverName := string(event.Kv.Key)
 				switch event.Type {
 				case mvccpb.PUT:
 					if !util.Exists(addrList, addr) {
-						addrList = append(addrList, resolver.Address{Addr: addr})
+						addrList = append(addrList, resolver.Address{Addr: addr, ServerName: serverName})
 						err = r.clientConn.UpdateState(resolver.State{Addresses: addrList})
 						if err != nil {
 							panic(err)
 						}
 					}
 				case mvccpb.DELETE:
-					log.Debugf("%s下线", addr)
-					if addrs, ok := util.Remove(addrList, addr); ok {
-						if err = r.clientConn.UpdateState(resolver.State{Addresses: addrs}); err != nil {
+					log.Debugf("%s下线", string(event.Kv.Key))
+					var ok bool
+					if addrList, ok = util.Remove(addrList, serverName); ok {
+						if err = r.clientConn.UpdateState(resolver.State{Addresses: []resolver.Address{}}); err != nil {
 							panic(err)
 						}
 					}

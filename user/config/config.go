@@ -9,8 +9,14 @@ import (
 
 var Conf = &config{}
 
-func InitConfig(path string) {
-	viper.SetConfigFile(path)
+// LoadApplicationConfigFile load the application configuration file
+// @Param path configuration file path, default "app.yml"
+func LoadApplicationConfigFile(path ...string) {
+	configFile := "app.yml"
+	if len(path) > 0 {
+		configFile = path[0]
+	}
+	viper.SetConfigFile(configFile)
 	viper.AutomaticEnv()
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Init project config error, %s", err.Error())
